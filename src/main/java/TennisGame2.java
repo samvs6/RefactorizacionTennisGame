@@ -28,9 +28,9 @@ public class TennisGame2 implements TennisGame
     }
 
 	private String tiedAndNotDeuce(String score, int player1Points2, int player2Points2) {
-		if (player1Points2 == player2Points2 && player1Points2 < _MatchPoint)
+		if (tiedScore(player1Points2, player2Points2) && isNotMatchPoint(player1Points2))
         {
-            if (player1Points2==_Love)
+            if (isLove(player1Points2))
                 score = "Love";
             if (player1Points2==_Fifteen)
                 score = "Fifteen";
@@ -38,13 +38,25 @@ public class TennisGame2 implements TennisGame
                 score = "Thirty";
             score += "-All";
         }
-        if (player1Points2==player2Points2 && player1Points2>=_Forty)
+        if (tiedScore(player1Points2, player2Points2) && higherOrEqualsForty(player1Points2))
             score = "Deuce";
 		return score;
 	}
 
+	private boolean higherOrEqualsForty(int player1Points2) {
+		return player1Points2>=_Forty;
+	}
+
+	private boolean isNotMatchPoint(int player1Points2) {
+		return player1Points2 < _MatchPoint;
+	}
+
+	private boolean tiedScore(int player1Points2, int player2Points2) {
+		return player1Points2 == player2Points2;
+	}
+
 	private String winningPlayer(String score, int player1Points2, int player2Points2) {
-		if (player1Points2 > _Love && player2Points2==_Love)
+		if (moreThanLove(player1Points2) && isLove(player2Points2))
         {
             if (player1Points2==_Fifteen)
                 convertToLiteralPlayer1Points = "Fifteen";
@@ -55,7 +67,7 @@ public class TennisGame2 implements TennisGame
             convertToLiteralPlayer2Points = "Love";
             score = convertToLiteralPlayer1Points + "-" + convertToLiteralPlayer2Points;
         }
-        if (player2Points2 > _Love && player1Points2==_Love)
+        if (moreThanLove(player2Points2) && isLove(player1Points2))
         {
             if (player2Points2==_Fifteen)
                 convertToLiteralPlayer2Points = "Fifteen";
@@ -69,16 +81,28 @@ public class TennisGame2 implements TennisGame
 		return score;
 	}
 
+	private boolean isLove(int player2Points2) {
+		return player2Points2==_Love;
+	}
+
+	private boolean moreThanLove(int player1Points2) {
+		return player1Points2 > _Love;
+	}
+
 	private String winingPlayerIsNotDeuce(String score, int player1Points2, int player2Points2) {
-		if (player1Points2>player2Points2 && player1Points2 < _MatchPoint)
+		if (firstPlayerIsWinning(player1Points2, player2Points2) && isNotMatchPoint(player1Points2))
         {
             score = thirty_forty_or_fifteen_for_player1(player1Points2, player2Points2);
         }
-        if (player2Points2>player1Points2 && player2Points2 < _MatchPoint)
+        if (firstPlayerIsWinning(player2Points2, player1Points2) && isNotMatchPoint(player2Points2))
         {
             score = thirty_forty_or_fifteen_for_player2(player1Points2, player2Points2);
         }
 		return score;
+	}
+
+	private boolean firstPlayerIsWinning(int player1Points2, int player2Points2) {
+		return player1Points2>player2Points2;
 	}
 
 	private String thirty_forty_or_fifteen_for_player1(int player1Points2, int player2Points2) {
@@ -110,25 +134,37 @@ public class TennisGame2 implements TennisGame
 	}
 
 	private String winForPlayer1orPlayer2(String score, int player1Points2, int player2Points2) {
-		if (player1Points2>=_MatchPoint && player2Points2>=_Love && (player1Points2-player2Points2)>=_Thirty)
+		if (higherOrEqualsMatchPoint(player1Points2) && moreOrEqualsLove(player2Points2) && differenceISEqualsOrHigherThanTrirty(player1Points2, player2Points2))
         {
             score = "Win for player1";
         }
-        if (player2Points2>=_MatchPoint && player1Points2>=_Love && (player2Points2-player1Points2)>=_Thirty)
+        if (higherOrEqualsMatchPoint(player2Points2) && moreOrEqualsLove(player1Points2) && differenceISEqualsOrHigherThanTrirty(player2Points2, player1Points2))
         {
             score = "Win for player2";
         }
 		return score;
 	}
 
+	private boolean moreOrEqualsLove(int player2Points2) {
+		return player2Points2>=_Love;
+	}
+
+	private boolean differenceISEqualsOrHigherThanTrirty(int player1Points2, int player2Points2) {
+		return (player1Points2-player2Points2)>=_Thirty;
+	}
+
+	private boolean higherOrEqualsMatchPoint(int player1Points2) {
+		return player1Points2>=_MatchPoint;
+	}
+
 	private String playerAdvantage(String score, int player1Points, int player2Points2) {
-		if (player1Points > player2Points2 && player2Points2 >= _Forty)
+		if (firstPlayerIsWinning(player1Points, player2Points2) && higherOrEqualsForty(player2Points2))
         {
         	
             score = "Advantage player1";
         }
 
-        if (player2Points2 > player1Points && player1Points >= _Forty)
+        if (firstPlayerIsWinning(player2Points2, player1Points) && higherOrEqualsForty(player1Points))
         {
             score = "Advantage player2";
         }
